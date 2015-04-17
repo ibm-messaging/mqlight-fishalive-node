@@ -1,0 +1,103 @@
+html, body {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+}
+
+body {
+  font-family: Sans-Serif;
+  font-size: 10pt;
+}
+
+div.header {
+  background-image: url("images/IBMBackGround1.gif");
+  background-repeat: repeat;
+  height: 50px;
+}
+
+div.main {
+  padding: 10px;
+}
+
+div.result, div.rubyresult, div.noderesult, div.libertyresult, div.pythonresult, div.javaresult {
+  padding: 3px;
+  margin: 3px;
+  float: left;
+}
+
+div.result {
+    border: 2px solid #000000;  
+}
+
+div.rubyresult {
+    border: 2px solid #cc342d;
+}
+
+div.noderesult {
+    border: 2px solid #0db399;  
+}
+
+div.libertyresult {
+    border: 2px dotted #135c6f; 
+}
+
+div.pythonresult {
+    border: 2px solid green;
+}
+
+div.javaresult {
+    border: 2px solid blue;
+}
+
+div.inputform {
+  clear: left;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#bars {
+  width: 100%;
+  position: fixed; bottom: 0; 
+  padding: 0px;
+  background-color: white;
+}
+
+#errors {
+  border-top: 1px solid red;
+  color: red;
+  font-style: italic;
+  width: 100%;
+  padding: 3px;
+}
+
+#information {
+  border-top: 1px solid blue;
+  width: 100%;
+  color: blue;
+  font-style: italic;
+  padding: 3px;
+}
+
+.bar {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  display: none;
+}
+
+.closestatus {
+  position: fixed;
+  right: 0;
+  cursor: pointer;
+}
+
+#header-left-img{
+  float:left;
+  padding-top: 1px;
+}
+
+#header-right-img {
+  float:right;
+  padding-top:30px;
+  padding-right: 10px;
+}
