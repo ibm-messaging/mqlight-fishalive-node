@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--     (C) COPYRIGHT International Business Machines Corp., 2013 -->
+<!-- All rights reserved * Licensed Materials - Property of IBM         -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="style.css" rel="stylesheet" type="text/css" />
+<title>MQ Light Service for Bluemix:- Worker Offload Pattern</title>
+<script type="text/javascript">
+
+var infoTimeout = null;
+
+  function onLoad() {
+    schedulePoll(1000);
+  }
+
+  function schedulePoll(timeoutmillis) {
+    setTimeout(function() { doGET();}, timeoutmillis);
+  }
+
+  function doGET() {
+    try {
+      var url = "rest/wordsuppercase?" + (new Date()).getTime(); // Cross-browser cache disable
+      var request = new XMLHttpRequest();
+      request.onreadystatechange = function() {
+        pollStateChanged(this);
+      };
+      request.open("GET", url, true);
+      request.responseType = "json";
+      request.send();
+    }
+    catch (err) {
+      console.log(err.message)
+    }    
+  }
+
+  function pollStateChanged(xhr) {
+    if (xhr.readyState == 4) /* DONE */{
+      var nextpolldelay = 1000;
+      if (xhr.status == 200) {
+        // We have some data
+        printResult(xhr.response);
+        nextpolldelay = 5;
+        if (infoTimeout != null) {
+          clearTimeout(infoTimeout);
+          infoTimeout = null;
+        }
+      } else {
+        if (xhr.status != 204) {
+          showMostRecentError("REST/HTTP polling GET of front-end for notifications failed: " + xhr.statusText);
+        }
+      }
+      // schedule the next poll
+      schedulePoll(nextpolldelay);
+    }
+  }
+
+  function escapeHtml(text) {
+      return text
+           .replace(/&/g, "&amp;")
+           .replace(/</g, "&lt;")
+           .replace(/>/g, "&gt;")
+           .replace(/"/g, "&quot;")
+           .replace(/'/g, "&#039;");
+   }
+
+  function printResult(result) {
+    var resultWord = result.word;
+    var divClass = "result";
+    var backEnd = result.backend;
+    if (backEnd != null) {
+      if ((/^Ruby/).test(backEnd)) {
+        divClass = "rubyresult";
+      } else if ((/^Node/).test(backEnd)) {
+        divClass = "noderesult";
+      } else if ((/^Liberty/).test(backEnd)) {
+        divClass = "libertyresult";
+      } else if ((/^Python/).test(backEnd)) {
+        divClass = "pythonresult";
+      } else if ((/^Java/).test(backEnd)) {
+        divClass = "javaresult";
+      }
+    }
+
+    var resultsDiv = document.getElementById("results");
+    var resultDiv = document.createElement("div");
+    resultDiv.className = divClass;    
+    resultDiv.innerHTML = escapeHtml(resultWord);
+    resultsDiv.appendChild(resultDiv);
+  }
+
+  function submitRequest() {
+    var url = "rest/words";
+    var words = document.getElementById("message").value;
+
+    try {
+      var request = new XMLHttpRequest();
+      request.open("POST", url, true);
+      request.setRequestHeader('Content-Type','application/json');
+      request.send(JSON.stringify({"words":words}));
+      if (infoTimeout == null) infoTimeout = setTimeout(function(){
+        showMostRecentInfo("No messages were received within 10 seconds of sending a sentence.<br/>" +
+          "- Check your back-end application is running<br/>" +
+          "- Use <code>cf logs</code> to check for errors in the back-end application<br/>" +
+          "- Check you do not have other browser windows open on this page that received the notifications");
+      }, 10000);
+    }
+    catch (err) {
+      showMostRecentError("REST/HTTP POST of words failed: " + err.message);
+    } 
+  }
+
+  function showMostRecentError(msg) {
+    var errorsContainer = document.getElementById("errorsbar");
+    var errorsDiv = document.getElementById("errors");
+    errorsDiv.innerHTML = new Date() + ": " + msg;
+    errorsContainer.style.display = "block";
+  }
+
+  function showMostRecentInfo(msg) {
+    var infoContainer = document.getElementById("infobar");
+    var infoDiv = document.getElementById("information");
+    infoDiv.innerHTML = msg;
+    infoContainer.style.display = "block";
+  }  
+
+  function checkSubmitKey(e) {
+    var charCode;
+    if (e && e.which) {
+      charCode = e.which;
+    } else if (window.event) {
+      e = window.event;
+      charCode = e.keyCode;
+    }
+    if (charCode == 13) {
+      submitRequest();
+    }
+  }
+</script>
+</head>
+<body onload="onLoad();">
+<div class="header">
+    <img src="images/lanim.gif" width="150" height="47" border="0" id="header-left-img">
+    <img src="images/WEBSPHERE_18P_UNIX.GIF" width="110" height="14" border="0" id="header-right-img">
+</div>
+<div class="main">
+  <h2>Sample MQ Light Service for Bluemix Application:- Worker Offload Pattern</h2>
+  <p>This sample demonstrates a simple worker-offload
+    pattern using the MQ Light messaging service.</p>
+  <img src="images/workeroffload.jpg" alt="Worker offload diagram" />
+  <p>The worker-offload
+    pattern improves responsiveness by allowing a front-end user interface
+    delegate work to one or more back-end worker instances.</p>
+    <p>
+      Type a sentence in the box and press submit. The sample will:</p>
+      <ol>
+        <li>Send the sentence from the browser to the front-end app using a HTTP POST</li>
+        <li>Send each word in the sentence from the front-end app to the workers using MQ Light</li>
+        <li>Invoke a worker for each word, which converts the word to upper-case</li>
+        <li>Send a notification containing the upper-case word from the worker to the front-end using MQ Light</li>
+        <li>Send each notification from the front-end app to the browser using a polling HTTP GET</li>
+        <li>Display the upper-case words in this page as they arrive</li>
+      </ol>
+      Some things to note:
+      <ul>
+        <li>Messages might not arrive in the order in which they are sent.<br/>
+            This is because each worker can take a variable amount of time to process a message.</li>
+        <li>If you open this page in multiple browsers, then only one will see each word.<br/>
+            This is because in this sample they all share a single durable subscription for notifications.</li>
+        <li>If you run both the Node.js and Liberty for Java back-end workers, then you will
+            see two notifications for each word.<br/>
+            This is because the sample workers use different durable subscriptions.</li>
+        <li>HTTP GET polling of notification messages is uncommon in real apps.<br/>
+            Apps normally process notifications as they arrive in the front-end, and update state in a
+            database or other state store.</li>
+      </ul>
+   <div class="noderesult">Notifications from the Node.js sample back-end look like this</div>
+   <div class="rubyresult">Notifications from the Ruby sample back-end look like this</div>
+   <div class="pythonresult">Notifications from the Python sample back-end look like this</div>
+   <div class="libertyresult">Notifications from the Liberty for J2EE sample back-end look like this</div>
+   <div class="javaresult">Notifications from the Java sample back-end look like this</div>
+
+  <div class="inputform">
+    <form>
+      <b>Sentence:</b>
+      <input type="text" size="100" maxlength="200" name="message"
+        id="message" onkeypress="checkSubmitKey(event)"
+        value="One, Two, Three, Four, Five, Once, I, Caught, a, Fish, Alive"/>
+      <input type="button" id="submit"
+        value="Submit Work " onclick="submitRequest()" />
+    </form>
+  </div>
+  <div id="results"> 
+
+  </div>
+
+</div>
+
+ <div id="bars">
+   <div id="infobar" class="bar">
+     <div class="closestatus" onclick="document.getElementById('infobar').style.display = 'none';">[x]</div>
+     <div id="information"></div>
+   </div>
+   <div id="errorsbar" class="bar">
+     <div class="closestatus" onclick="document.getElementById('errorsbar').style.display = 'none';">[x]</div>
+     <div id="errors"></div>
+   </div>
+ </div>
+
+</body>
+</html>
