@@ -99,9 +99,9 @@ function processMessage(data, delivery) {
  * Add static HTTP content handling
  */
 function staticContentHandler(req,res) {
-  var url = req.url.substr(1);
-  if (url == '') { url = __dirname + '/web/index.html';};
-  if (url == 'style.css') {res.contentType('text/css');}
+  var url = 'web/' + req.url.substr(1);
+  if (url == 'web/') { url = __dirname + '/web/index.html'; }
+  if (url == 'web/style.css') { res.contentType('text/css'); }
   fs.readFile(url,
 	function (err, data) {
 		if (err) {
