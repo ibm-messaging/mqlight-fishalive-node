@@ -1,0 +1,19 @@
+---
+applications:
+- name:  mql.fishalive.node.backend
+  disk: 1024M
+  command: node app.js
+  path: backend
+  memory: 128M
+  instances: 2
+  no-route: true
+  services:
+  - MQLight-sampleservice
+- name:  mql.fishalive.node.frontend
+  disk: 1024M
+  command: node app.js
+  path: frontend
+  memory: 128M
+  host: mqlight-fishalive-node-${random-word}
+  services:
+  - MQLight-sampleservice
