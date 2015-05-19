@@ -19,6 +19,7 @@ var SHARE_ID = "fishalive-workers";
 var mqlightServiceName = "mqlight";
 	
 var mqlight = require('mqlight');
+var uuid = require('node-uuid');
 
 /*
  * Establish MQ credentials
@@ -38,12 +39,12 @@ if (process.env.VCAP_SERVICES) {
 } else {
 	opts.service = 'amqp://localhost:5672';
 }
+opts.id = 'NODE_WORKER_' + uuid.v4().substring(0, 7);
 
 /*
  * Create our MQ Light client
  * If we are not running in Bluemix, then default to a local MQ Light connection  
  */
-var mqlightSubInitialised = false;
 var mqlightClient = mqlight.createClient(opts, function(err) {
 		if (err) {
 			console.error('Connection to ' + opts.service + ' using client-id ' + mqlightClient.id + ' failed: ' + err);
@@ -62,7 +63,6 @@ var mqlightClient = mqlight.createClient(opts, function(err) {
 			    	 if (err) console.err("Failed to subscribe: " + err); 
 			    	 else {
 			    		 console.log("Subscribed");
-			    		 mqlightSubInitialised = true;
 			    	 }
 			     });
 	});

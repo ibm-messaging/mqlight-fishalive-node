@@ -14,8 +14,6 @@ var PUBLISH_TOPIC = "mqlight/sample/words";
 	
 var SUBSCRIBE_TOPIC = "mqlight/sample/wordsuppercase";
 
-var SHARE_ID = "node-front-end";
-
 var mqlightServiceName = "mqlight";
 
 var http = require('http');
@@ -23,6 +21,7 @@ var express = require('express');
 var fs = require('fs');
 var mqlight = require('mqlight');
 var bodyParser = require('body-parser');
+var uuid = require('node-uuid');
 
 /*
  * Establish MQ credentials
@@ -42,6 +41,8 @@ if (process.env.VCAP_SERVICES) {
 } else {
 	opts.service = 'amqp://localhost:5672';
 }
+opts.id = 'NODE_FRONTEND_' + uuid.v4().substring(0, 7);
+
 
 /*
  * Establish HTTP credentials, then configure Express
@@ -68,7 +69,7 @@ var mqlightClient = mqlight.createClient(opts, function(err) {
 	 * Create our subscription
 	 */
 	mqlightClient.on('message', processMessage);
-	mqlightClient.subscribe(SUBSCRIBE_TOPIC, SHARE_ID, 
+	mqlightClient.subscribe(SUBSCRIBE_TOPIC, 
 		{credit : 1,
 			autoConfirm : false,
 			qos : 1}, function(err) {
