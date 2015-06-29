@@ -7,14 +7,14 @@
   },
   "version" : "1.0.0",
   "dependencies" : {
-    "mqlight" : ">=1.0.2015031902",
+    "mqlight" : ">=1.0.2015061000",
     "hashmap" : ">=1.1.0",
     "moment" : ">=2.8.3",
     "node-uuid" : ">=1.4.1",
     "npmlog" : ">=0.1.1"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "0.12.x"
   },
   "scripts" : {"start":"node app.js"}
 }
