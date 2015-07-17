@@ -68,6 +68,12 @@ var mqlightClient = mqlight.createClient(opts, function(err) {
 			     });
 	});
 
+mqlightClient.on('error', function(err) {
+	setTimeout(function(){
+		mqlightClient.start();
+	}, 10000);
+});
+
 /*
  * Handle each message as it arrives
  */

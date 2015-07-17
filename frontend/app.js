@@ -82,6 +82,12 @@ var mqlightClient = mqlight.createClient(opts, function(err) {
 			});
 });
 
+mqlightClient.on('error', function(err) {
+	setTimeout(function(){
+		mqlightClient.start();
+	}, 10000);
+});
+
 /*
  * Store a maximum of one message from the MQ Light server, for the browser to poll. 
  * The polling GET REST handler does the confirm
