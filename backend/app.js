@@ -37,7 +37,8 @@ if (process.env.VCAP_SERVICES) {
 	opts.user = mqlightService.credentials.username;
 	opts.password = mqlightService.credentials.password;
 } else {
-	opts.service = 'amqp://localhost:5672';
+	fishaliveHost = process.env.FISHALIVE_HOST || 'localhost';
+	opts.service = 'amqp://' + fishaliveHost + ':5672';
 }
 opts.id = 'NODE_WORKER_' + uuid.v4().substring(0, 7);
 
