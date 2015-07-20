@@ -35,7 +35,7 @@ if (process.env.VCAP_SERVICES) {
 		throw 'Error - Check that app is bound to service';
 	}
 	mqlightService = services[mqlightServiceName][0];
-	opts.service = mqlightService.credentials.connectionLookupURI;
+	opts.service = mqlightService.credentials.nonTLSConnectionLookupURI;
 	opts.user = mqlightService.credentials.username;
 	opts.password = mqlightService.credentials.password;
 } else {
