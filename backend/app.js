@@ -61,7 +61,7 @@ var mqlightClient = mqlight.createClient(opts, function (err) {
    * Create our subscription
    */
   mqlightClient.on('message', processMessage)
-  var subOpts = { credit: 5, autoConfirm: true, qos: 0 }
+  var subOpts = { credit: 5, autoConfirm: false, qos: 1 }
   mqlightClient.subscribe(SUBSCRIBE_TOPIC, SHARE_ID, subOpts, function (err) {
     if (err) {
       console.error('Failed to subscribe: ' + err)
@@ -100,6 +100,8 @@ function processMessage (data, delivery) {
     // We could leave as an Object, but this is better for interop
     replyData = JSON.stringify(replyData)
     console.log('Sending response: ' + replyData)
-    mqlightClient.send(PUBLISH_TOPIC, replyData)
+    mqlightClient.send(PUBLISH_TOPIC, replyData, function () {
+      delivery.message.confirmDelivery()
+    })
   }
 }
