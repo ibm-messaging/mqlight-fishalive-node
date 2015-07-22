@@ -4,3 +4,11 @@ This project contains Node.js samples demonstrating how to use MQ Light to perfo
 
 Check out the blog posts at [IBM Messaging](https://developer.ibm.com/messaging/blogs/)
 for more info on these samples.
+
+## Deployment
+
+```
+$ cf push mql.fishalive.node.backend
+$ cf push mql.fishalive.node.frontend
+```
+
