@@ -61,7 +61,7 @@ var mqlightClient = mqlight.createClient(opts, function (err) {
    * Create our subscription
    */
   mqlightClient.on('message', processMessage)
-  var subOpts = { credit: 5, autoConfirm: false, qos: 1 }
+  var subOpts = { credit: 1, autoConfirm: false, qos: 1 }
   mqlightClient.subscribe(SUBSCRIBE_TOPIC, SHARE_ID, subOpts, function (err) {
     if (err) {
       console.error('Failed to subscribe: ' + err)

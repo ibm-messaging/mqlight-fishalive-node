@@ -72,7 +72,7 @@ var mqlightClient = mqlight.createClient(opts, function (err) {
    * Create our subscription
    */
   mqlightClient.on('message', processMessage)
-  var subOpts = {credit: 1, autoConfirm: false, qos: 1}
+  var subOpts = {credit: 32, autoConfirm: false, qos: 1}
   mqlightClient.subscribe(SUBSCRIBE_TOPIC, subOpts, function (err) {
     if (err) {
       console.error('Failed to subscribe: ' + err)
@@ -88,10 +88,10 @@ mqlightClient.on('error', function (err) {
 })
 
 /*
- * Store a maximum of one message from the MQ Light server, for the browser to
+ * Store unconfirmed messages from the MQ Light server, for the browser to
  * poll.  The polling GET REST handler does the confirm
  */
-var heldMsg
+var heldMessages = []
 function processMessage (data, delivery) {
   try {
     data = JSON.parse(data)
@@ -99,7 +99,7 @@ function processMessage (data, delivery) {
   } catch (e) {
     // Expected if we're receiving a Javascript object
   }
-  heldMsg = {'data': data, 'delivery': delivery}
+  heldMessages.push({'data': data, 'delivery': delivery})
 }
 
 /*
@@ -164,18 +164,20 @@ app.post('/rest/words', function (req, res) {
  * GET handler to poll for notifications
  */
 app.get('/rest/wordsuppercase', function (req, res) {
-  // Do we have a message held?
-  var msg = heldMsg
-  if (msg) {
-    // Let the next message stream down from MQ Light
-    heldMsg = null
-    msg.delivery.message.confirmDelivery()
-    // Send the data to the caller
-    res.json(msg.data)
-  } else {
+  // Do we have any messages held?
+  if (heldMessages.length === 0) {
     // Just return no-data
     res.writeHead(204)
     res.end()
+  } else {
+    var msgData = []
+    while (heldMessages.length > 0) {
+      var msg = heldMessages.shift()
+      msg.delivery.message.confirmDelivery()
+      msgData.push(msg.data)
+    }
+    // Send the data to the caller
+    res.json(JSON.stringify(msgData))
   }
 })
 
