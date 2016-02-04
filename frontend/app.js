@@ -17,6 +17,7 @@ var PUBLISH_TOPIC = 'mqlight/sample/words'
 var SUBSCRIBE_TOPIC = 'mqlight/sample/wordsuppercase'
 
 var mqlightServiceName = 'mqlight'
+var messageHubServiceName = 'messagehub';
 
 var http = require('http')
 var express = require('express')
@@ -31,15 +32,26 @@ var uuid = require('node-uuid')
 var opts = {}
 var mqlightService = {}
 if (process.env.VCAP_SERVICES) {
-  var services = JSON.parse(process.env.VCAP_SERVICES)
-  console.log('Running BlueMix')
-  if (services[mqlightServiceName] === null) {
-    throw Error('Error - Check that app is bound to service')
+  var services = JSON.parse(process.env.VCAP_SERVICES);
+  console.log('Running BlueMix');
+  for (var key in services) {
+    if (key.lastIndexOf(mqlightServiceName, 0) === 0) {
+      mqlightService = services[key][0];
+      opts.service = mqlightService.credentials.nonTLSConnectionLookupURI;
+      opts.user = mqlightService.credentials.username;
+      opts.password = mqlightService.credentials.password;
+    } else if (key.lastIndexOf(messageHubServiceName, 0) === 0) {
+      messageHubService = services[key][0];
+      opts.service = messageHubService.credentials.connectionLookupURI;
+      opts.user = messageHubService.credentials.user;
+      opts.password = messageHubService.credentials.password;
+    }
   }
-  mqlightService = services[mqlightServiceName][0]
-  opts.service = mqlightService.credentials.nonTLSConnectionLookupURI
-  opts.user = mqlightService.credentials.username
-  opts.password = mqlightService.credentials.password
+  if (!opts.hasOwnProperty('service') ||
+      !opts.hasOwnProperty('user') ||
+      !opts.hasOwnProperty('password')) {
+    throw 'Error - Check that app is bound to service';
+  }
 } else {
   var fishaliveHost = process.env.FISHALIVE_HOST || 'localhost'
   opts.service = 'amqp://' + fishaliveHost + ':5672'
