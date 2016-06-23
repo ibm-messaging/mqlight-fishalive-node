@@ -10,8 +10,8 @@ for more info on these samples.
 
 ## Deploying to Bluemix
 
-The sample can be used with either the 'MQ Light' service or 'Message Hub
-Incubator' experimental service.
+The sample can be used with either the 'MQ Light' service or 'Message Hub'
+service.
 
 1.  Create an instance of the service using either the Bluemix console or the
     Bluemix cf command line tool.

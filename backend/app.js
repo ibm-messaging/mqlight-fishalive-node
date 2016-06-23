@@ -40,7 +40,7 @@ if (process.env.VCAP_SERVICES) {
       opts.password = mqlightService.credentials.password;
     } else if (key.lastIndexOf(messageHubServiceName, 0) === 0) {
       messageHubService = services[key][0];
-      opts.service = messageHubService.credentials.connectionLookupURI;
+      opts.service = messageHubService.credentials.mqlight_lookup_url;
       opts.user = messageHubService.credentials.user;
       opts.password = messageHubService.credentials.password;
     }
