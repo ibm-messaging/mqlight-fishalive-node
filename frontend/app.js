@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 IBM Corporation and other Contributors.
+ * Copyright (c) 2014, 2016 IBM Corporation and other Contributors.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -56,6 +56,12 @@ if (process.env.VCAP_SERVICES) {
       !opts.hasOwnProperty('password')) {
     throw 'Error - Check that app is bound to service';
   }
+} else if (process.env.mqlight_lookup_url &&
+           process.env.mqlight_user &&
+           process.env.mqlight_password) {
+  opts.service = process.env.mqlight_lookup_url;
+  opts.user = process.env.mqlight_user;
+  opts.password = process.env.mqlight_password;
 } else {
   var fishaliveHost = process.env.FISHALIVE_HOST || 'localhost'
   opts.service = 'amqp://' + fishaliveHost + ':5672'
