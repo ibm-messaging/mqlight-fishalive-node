@@ -87,8 +87,6 @@ var infoTimeout = null;
         divClass = "rubyresult";
       } else if ((/^Node/).test(backEnd)) {
         divClass = "noderesult";
-      } else if ((/^Liberty/).test(backEnd)) {
-        divClass = "libertyresult";
       } else if ((/^Python/).test(backEnd)) {
         divClass = "pythonresult";
       } else if ((/^Java/).test(backEnd)) {
@@ -178,11 +176,8 @@ var infoTimeout = null;
       <ul>
         <li>Messages might not arrive in the order in which they are sent.<br/>
             This is because each worker can take a variable amount of time to process a message.</li>
-        <li>If you open this page in multiple browsers, then only one will see each word.<br/>
-            This is because in this sample they all share a single durable subscription for notifications.</li>
-        <li>If you run both the Node.js and Liberty for Java back-end workers, then you will
-            see two notifications for each word.<br/>
-            This is because the sample workers use different durable subscriptions.</li>
+        <li>If you open this page in multiple browsers, then each will receive all words.<br/>
+            This is because in this sample each instance subscribes to notifications from all backend workers.</li>
         <li>HTTP GET polling of notification messages is uncommon in real apps.<br/>
             Apps normally process notifications as they arrive in the front-end, and update state in a
             database or other state store.</li>
@@ -190,7 +185,6 @@ var infoTimeout = null;
    <div class="noderesult">Notifications from the Node.js sample back-end look like this</div>
    <div class="rubyresult">Notifications from the Ruby sample back-end look like this</div>
    <div class="pythonresult">Notifications from the Python sample back-end look like this</div>
-   <div class="libertyresult">Notifications from the Liberty for J2EE sample back-end look like this</div>
    <div class="javaresult">Notifications from the Java sample back-end look like this</div>
 
   <div class="inputform">

@@ -13,8 +13,5 @@
     "node-uuid" : ">=1.4.1",
     "npmlog" : ">=0.1.1"
   },
-  "engines": {
-    "node": "0.12.x"
-  },
   "scripts" : {"start":"node app.js"}
 }
