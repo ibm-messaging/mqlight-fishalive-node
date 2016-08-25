@@ -19,7 +19,7 @@ div.main {
   padding: 10px;
 }
 
-div.result, div.rubyresult, div.noderesult, div.libertyresult, div.pythonresult, div.javaresult {
+div.result, div.rubyresult, div.noderesult, div.pythonresult, div.javaresult {
   padding: 3px;
   margin: 3px;
   float: left;
@@ -35,10 +35,6 @@ div.rubyresult {
 
 div.noderesult {
     border: 2px solid #0db399;  
-}
-
-div.libertyresult {
-    border: 2px dotted #135c6f; 
 }
 
 div.pythonresult {
