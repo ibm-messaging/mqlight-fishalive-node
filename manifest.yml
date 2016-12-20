@@ -7,6 +7,7 @@ applications:
   memory: 128M
   instances: 2
   no-route: true
+  health-check-type: none
   services:
   - MQLight-sampleservice
 - name:  mql.fishalive.node.frontend

@@ -62,7 +62,15 @@ opts.id = 'NODE_FRONTEND_' + uuid.v4().substring(0, 7)
  * Establish HTTP credentials, then configure Express
  */
 var httpOpts = {}
-httpOpts.port = (process.env.VCAP_APP_PORT || 3000)
+if (process.env.PORT) { // CF Diego
+  httpOpts.port = process.env.PORT;
+}
+else if (process.env.VCAP_APP_PORT) { // CF DEA
+  httpOpts.port = process.env.VCAP_APP_PORT;
+}
+else { // running local
+  httpOpts.port = 3000;
+}
 
 var app = express()
 
