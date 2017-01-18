@@ -10,13 +10,14 @@ for more info on these samples.
 
 ## Deploying to Bluemix
 
-The sample can be used with either the 'MQ Light' service or 'Message Hub'
-service.
+The sample can be used with the 'Message Hub' service.
 
 1.  Create an instance of the service using either the Bluemix console or the
     Bluemix cf command line tool.
 
-2.  Edit the manifest.yml file in the root directory of the sample to reflect
+2.  In the Message Hub service Dashboard, create a topic called "MQLight" with a single partition.
+
+3.  Edit the manifest.yml file in the root directory of the sample to reflect
     the name of the service created above.
 
  ```yml
@@ -27,7 +28,7 @@ service.
    - <TheNameOfYourService>
  ```
 
-3. From the root directory of the sample use the Bluemix cf command line
+4. From the root directory of the sample use the Bluemix cf command line
    tool to push the sample to Bluemix, as below:
  ```
  $ cf push

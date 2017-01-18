@@ -1,15 +1,18 @@
 ---
 applications:
 - name:  mql.fishalive.node.backend
+  buildpack: sdk-for-nodejs
   disk: 1024M
   command: node app.js
   path: backend
   memory: 128M
   instances: 2
   no-route: true
+  health-check-type: none
   services:
   - MQLight-sampleservice
 - name:  mql.fishalive.node.frontend
+  buildpack: sdk-for-nodejs
   disk: 1024M
   command: node app.js
   path: frontend
